@@ -1,22 +1,31 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+default: &defaults
+  docker:
+      - image: circleci/node:13.8.0
 commands:
   print_pipeline_id:
     description: Command to print the id of the current pipeline
     steps:
       - run: echo $CIRCLE_WORKFLOW_ID
 
-# Orchestrate or schedule a set of jobs
 jobs:
+  failed_job:
+    <<: *defaults
+    steps:
+      - print_pipeline
+      - run:
+          name: Run after failure
+          command: |
+            echo "Failed successfully" 
+          when: on_fail
   print_from_command:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps: 
       - print_pipeline_id
     
   save_hello_world_output:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - run:
           name: "output hello world to a text file"
@@ -28,16 +37,13 @@ jobs:
             - output.txt
   
   print_output_file:
-    docker: 
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - attach_workspace:
           at: ~/
       - run: cat ~/output.txt
 workflows:
-  # Name the workflow "welcome"
-  readwrite_file_workflow:
-    # Run the welcome/run job in its own container
+  test_workflow:
     jobs:
       - print_from_command
       - save_hello_world_output
