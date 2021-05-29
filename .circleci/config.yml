@@ -13,7 +13,7 @@ jobs:
   failed_job:
     <<: *defaults
     steps:
-      - print_pipeline
+      - run: return 1
       - run:
           name: Run after failure
           command: |
