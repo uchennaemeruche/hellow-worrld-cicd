@@ -46,6 +46,7 @@ workflows:
   test_workflow:
     jobs:
       - print_from_command
+      - failed_job
       - save_hello_world_output
       - print_output_file:
           requires:
